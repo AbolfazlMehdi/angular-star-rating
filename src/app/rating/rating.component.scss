@@ -4,14 +4,6 @@
 .stars {
   flex: 0 0 50%;
 }
-.star__label {
-  flex: 0 0 50%;
-  margin: 0;
-}
-.star__rating__info {
-  flex: 100%;
-  min-height: 30px;
-}
 
 .star {
   cursor: pointer;
@@ -20,26 +12,13 @@
 
   fill: white;
   stroke: #ccc;
-
   transform: scale(0.8);
   transition: transform 200ms ease-in-out;
   path {
     transition: fill 200ms ease-in-out, stroke 100ms ease-in-out;
   }
 }
-//svg.star{
-//  &:hover{
-//    fill: #ffbb00;
-//    stroke: darken(#ffbb00, 10%);
-//  }
-//}
 .active, .hover {
   fill: #ffbb00;
   stroke: darken(#ffbb00, 10%);
-}
-
-// DEMO PURPOSES
-* {
-  display: flex;
-  flex-flow: row wrap;
 }
