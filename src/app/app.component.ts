@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,22 +6,12 @@ import {FormBuilder, FormGroup} from "@angular/forms";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  form: FormGroup;
-  restaurant = 'Chili\'s';
+  count = 1
 
-  constructor(private fb: FormBuilder){
-    this.form = this.fb.group({
-      cleanliness: this.fb.control(null),
-      quality: this.fb.control(2)
-    });
-
-    // confirm values
-    this.form.valueChanges.subscribe(data => { console.log(data); });
-  }
-
-  onSubmit(){ console.log(this.form.value); }
-
-  public ratingMessage(ratingName: string) {
-
+  constructor(){}
+  onChange() {
+    this.count = this.count+1;
+    debugger
+    console.log(this.count)
   }
 }

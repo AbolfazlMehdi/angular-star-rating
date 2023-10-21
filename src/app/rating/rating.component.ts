@@ -2,15 +2,15 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
   forwardRef,
-  HostBinding,
   Input,
+  OnChanges,
   OnInit,
-  Output, Renderer2
+  Renderer2,
+  SimpleChanges
 } from '@angular/core';
 import {ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {BaseControlValueAccessor} from "./BaseControlValueAccessor";
+import {range} from "rxjs";
 
 @Component({
   selector: 'app-rating',
@@ -24,28 +24,44 @@ import {BaseControlValueAccessor} from "./BaseControlValueAccessor";
     }
   ]
 })
-export class RatingComponent  extends BaseControlValueAccessor<any>
-  implements AfterViewInit{
+export class RatingComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit {
 
-  @Input() stars = [0, 1, 2, 3, 4]; // default is 5 stars
-  @Input() messages: Array<string> = [] // optional text descriptors for each rating value
-  @Input() label: string  =''; // optional Label
-  @Input() override  value: any = null; // un-touched value should be null
-  displayText: any ;
-  override disabled: boolean  =false;
-  ratingText: any;
+  @Input() starsLength: number = 5;
+  value: any = null;
+  stars: Array<number> = []
+
+  public onChange(newVal: any) {
+  }
+
+  public onTouched(_?: any) {
+  }
 
   constructor(
     private fb: FormBuilder,
     private eRef: ElementRef,
     private renderer: Renderer2
   ) {
-    super();
   }
 
-  override writeValue(val: any) {
+  writeValue(val: any) {
     this.value = val;
-    super.writeValue(this.value);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.setStarts();
+  }
+
+  setStarts() {
+    this.stars = [];
+    range(0, this.starsLength).subscribe({
+      next: (res) => {
+        this.stars.push(res)
+      }
+    })
+  }
+
+  ngOnInit() {
+    this.setStarts()
   }
 
   setRating(rating: any) {
@@ -60,34 +76,52 @@ export class RatingComponent  extends BaseControlValueAccessor<any>
 
     for (let i = 0, j = svgs.length; i < j; i++) {
       if (i <= rating) {
-        this.renderer.addClass(svgs[i], 'active');
+        this.addSelected(svgs[i], 'active')
       } else {
-        this.renderer.removeClass(svgs[i], 'active');
+        this.removeSelected(svgs[i], 'active')
       }
     }
   }
-  hoverRating(index: number){
+
+  hoverRating(index: number) {
     const svgs = this.eRef.nativeElement.querySelectorAll('svg.star');
     for (let i = 0, j = svgs.length; i < j; i++) {
-      this.renderer.addClass(svgs[i], 'hover');
       if (i <= index) {
-
+        this.addSelected(svgs[i], 'hover')
       } else {
-        this.renderer.removeClass(svgs[i], 'hover');
+        this.removeSelected(svgs[i], 'hover')
       }
     }
   }
+
   mouseOutRating(index: number) {
     const svgs = this.eRef.nativeElement.querySelectorAll('svg.star');
     for (let i = 0, j = svgs.length; i < j; i++) {
-      this.renderer.removeClass(svgs[i], 'hover');
+      this.removeSelected(svgs[i], 'hover')
     }
   }
+
+  removeSelected(item: any, className: string) {
+    this.renderer.removeClass(item, className);
+  }
+
+  addSelected(item: any, className: string) {
+    this.renderer.addClass(item, className);
+  }
+
 
   ngAfterViewInit() {
     if (this.value !== null) {
       let initialValue = this.value;
       this.setRating(--initialValue);
     }
+  }
+
+  public registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  public registerOnTouched(fn: any): void {
+    this.onTouched = fn;
   }
 }
