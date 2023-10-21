@@ -1,5 +1,2 @@
-<form   [formGroup]="form" (keydown.enter)="$event.preventDefault()">
-  <app-rating  ></app-rating>
-
-  <button type="submit">submit</button>
-</form>
+  <app-rating [starsLength]="count"></app-rating>
+<button (click)="onChange()">cjange</button>
